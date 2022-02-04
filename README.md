@@ -6,7 +6,7 @@ A fully stripped down version of the [Official NextJs x TailwindCSS starter](htt
 
 *Clone this repo, then follow the below instructions:*
 
-1. Install depencies
+1. Install dependencies
 ```bash
 npm install
 ```  
