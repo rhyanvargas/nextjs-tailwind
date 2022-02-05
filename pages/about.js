@@ -1,21 +1,22 @@
 import Layout from '../components/layout'
 // import PropTypes from 'prop-types';
 
-const Index = () => {
+const About = () => {
   return (
     <div>
       <main >
         <h1 className="text-3xl font-bold underline">
-          Welcome to NextWind!
+          Welcome to About!
         </h1>
+
       </main>
 
     </div>
   )
 };
 
-// Index.propTypes = {
-//   pageProps: PropTypes.any
+// About.propTypes = {
+//   props: PropTypes.any
 // };
 
-export default Index;
+export default About;
