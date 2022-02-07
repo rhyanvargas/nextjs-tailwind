@@ -2,3 +2,22 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+@layer base {
+  body {
+    @apply font-mono;
+  }
+  section {
+    @apply py-10 md:py-16 border-2;
+  }
+  h1,h2,h3,h4 {
+    @apply font-serif text-3xl font-bold ;
+  }
+}
+
+@layer components {
+  .container {
+    @apply px-[15px] mx-auto ;
+  }
+}

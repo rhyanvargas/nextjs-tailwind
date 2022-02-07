@@ -11,27 +11,30 @@ const Layout = ({ children }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Navigation />
-      <main className='container mx-auto'>
+      <main className='mx-auto'>
         {/* use <section> tags in page level to seperate content */}
         {children}
+        {/* EXAMPLE CONTENT STRUCTURE - section > div.container  */}
         <section>
-          <p>
-            This example adds a property <code>getLayout</code> to your page,
-            allowing you to return a React component for the layout. This allows you
-            to define the layout on a per-page basis. Since we're returning a
-            function, we can have complex nested layouts if desired.
-          </p>
-          <p>
-            When navigating between pages, we want to persist page state (input
-            values, scroll position, etc) for a Single-Page Application (SPA)
-            experience.
-          </p>
-          <p>
-            This layout pattern will allow for state persistence because the React
-            component tree is persisted between page transitions. To preserve state,
-            we need to prevent the React component tree from being discarded between
-            page transitions.
-          </p>
+          <div className="container mx-auto">
+            <p>
+              This example adds a property <code>getLayout</code> to your page,
+              allowing you to return a React component for the layout. This allows you
+              to define the layout on a per-page basis. Since we're returning a
+              function, we can have complex nested layouts if desired.
+            </p>
+            <p>
+              When navigating between pages, we want to persist page state (input
+              values, scroll position, etc) for a Single-Page Application (SPA)
+              experience.
+            </p>
+            <p>
+              This layout pattern will allow for state persistence because the React
+              component tree is persisted between page transitions. To preserve state,
+              we need to prevent the React component tree from being discarded between
+              page transitions.
+            </p>
+          </div>
         </section>
       </main>
     </>
