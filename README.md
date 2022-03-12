@@ -4,7 +4,7 @@ A fully stripped down version of the [Official NextJs x TailwindCSS starter](htt
 
 ## Getting Started
 
-*Clone this repo, then follow the below instructions:*
+Clone repo: `git clone https://github.com/rhyanvargas/nextjs-tailwind.git`
 
 1. Install dependencies
 ```bash
