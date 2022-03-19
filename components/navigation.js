@@ -1,37 +1,26 @@
 import Link from "next/link";
-import Image from 'next/image'
-import logoImg from '../public/nextwind-logo-text-dark.png'
+import Image from "next/image";
+import logoImg from "../public/nextwind-logo-text-dark.png";
 // import PropTypes from 'prop-types';
-
 
 const NAV_ITEMS = [
   {
-    "name": "home",
-    "url": "/"
+    name: "home",
+    url: "/",
   },
   {
-    "name": "team",
-    "url": "/team"
+    name: "team",
+    url: "/team",
   },
-  // {
-  //   "name": "roadmap",
-  //   "url": "/roadmap"
-  // },
-  // {
-  //   "name": "gallery",
-  //   "url": "/gallery"
-  // },
-
-
-]
+];
 
 export const navItem = (text = "Nav Item", url = "#") => {
   return (
     <Link href={url}>
       <a>{text}</a>
     </Link>
-  )
-}
+  );
+};
 
 const logo = (
   <Image
@@ -42,15 +31,18 @@ const logo = (
   // blurDataURL="data:..." automatically provided
   // placeholder="blur" // Optional blur-up while loading
   />
-)
+);
 
+const onClickHandler = () => {
+  alert("CONNECT CLICK!");
+};
 
 const Navigation = () => {
   return (
-    <nav className={`container mx-auto items-center fixed bottom-0 sm:relative w-full border-gray border-t-[1px] flex justify-between`}>
-      <div className=" flex flex-initial w-44  h-auto">
-        {logo}
-      </div>
+    <nav
+      className={`border-gray container fixed bottom-0 mx-auto flex w-full items-center justify-between border-t-[1px] sm:relative`}
+    >
+      <div className=" flex h-auto w-44  flex-initial">{logo}</div>
       <ul className="flex flex-1 justify-end">
         {NAV_ITEMS.map((item, index) => {
           let name = item.name;
@@ -59,10 +51,17 @@ const Navigation = () => {
             <li className={`px-4`} key={`${item}.toString + ${index}`}>
               {navItem(name, url)}
             </li>
-          )
+          );
         })}
-        {/* <input placeholder="Search..." /> */}
       </ul>
+      <div>
+        <button
+          className={`rounded-md border-2 border-black px-4 py-2 font-mono text-sm  uppercase tracking-wide hover:border-transparent hover:bg-black hover:text-white focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2`}
+          onClick={onClickHandler}
+        >
+          Connect
+        </button>
+      </div>
     </nav>
   );
 };
