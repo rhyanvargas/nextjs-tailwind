@@ -1,6 +1,6 @@
 // import PropTypes from 'prop-types';
-const Index = () => {
 
+const Index = () => {
   const onClickHandler = () => {
     alert("CLICKED");
   }

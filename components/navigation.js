@@ -33,11 +33,21 @@ const logo = (
   />
 );
 
+const handleOnConnect = async () => {
+  // TODO
+}
+
 const onClickHandler = () => {
+  // handleOnConnect();
   alert("CONNECT CLICK!");
 };
 
 const Navigation = () => {
+  // const [wallet, setWallet] = useState({
+  //   provider: null,
+  //   signer: null
+  // })
+
   return (
     <nav
       className={`border-gray container fixed bottom-0 mx-auto flex w-full items-center justify-between border-t-[1px] sm:relative`}
