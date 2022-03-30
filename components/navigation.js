@@ -1,6 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import logoImg from "../public/nextwind-logo-text-dark.png";
+import { useState, useEffect } from "react";
+import { addEllipsis, copyToClipboard } from "../utils/utils";
+import { DocumentDuplicateIcon } from '@heroicons/react/solid'
 // import PropTypes from 'prop-types';
 
 const NAV_ITEMS = [
@@ -12,16 +15,18 @@ const NAV_ITEMS = [
     name: "team",
     url: "/team",
   },
+  {
+    name: "mint",
+    url: "/mint",
+  },
 ];
-
-export const navItem = (text = "Nav Item", url = "#") => {
+const navItem = (text = "Nav Item", url = "#") => {
   return (
     <Link href={url}>
       <a>{text}</a>
     </Link>
   );
 };
-
 const logo = (
   <Image
     src={logoImg}
@@ -33,20 +38,34 @@ const logo = (
   />
 );
 
-const handleOnConnect = async () => {
-  // TODO
-}
+const Navigation = ({ handleConnect, accounts }) => {
+  const account = accounts && accounts[0]
+  const accountEllipString = account && addEllipsis(account)
+  const [isCopied, setIsCopied] = useState(false);
 
-const onClickHandler = () => {
-  // handleOnConnect();
-  alert("CONNECT CLICK!");
-};
+  const handleOnConnect = () => {
+    if (account) {
+      handleCopyClick();
+    };
 
-const Navigation = () => {
-  // const [wallet, setWallet] = useState({
-  //   provider: null,
-  //   signer: null
-  // })
+    handleConnect();
+  }
+
+  const handleCopyClick = () => {
+    // Asynchronously call copyTextToClipboard
+    copyToClipboard(account)
+      .then(() => {
+        // If successful, update the isCopied state value
+        setIsCopied(true);
+        alert(`Copied to clipboard`);
+        setTimeout(() => {
+          setIsCopied(false);
+        }, 1500);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 
   return (
     <nav
@@ -64,12 +83,14 @@ const Navigation = () => {
           );
         })}
       </ul>
-      <div>
+      <div >
         <button
-          className={`rounded-md border-2 border-black px-4 py-2 font-mono text-sm  uppercase tracking-wide hover:border-transparent hover:bg-black hover:text-white focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2`}
-          onClick={onClickHandler}
+          className={`rounded-md border-2 border-black px-4 py-2 font-mono text-sm  uppercase tracking-wide hover:border-transparent hover:bg-black hover:text-white focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 overflow-hidden whitespace-nowrap`}
+          onClick={handleOnConnect}
         >
-          Connect
+          {account ? '🦊 ' + accountEllipString : 'Connect'}
+          {account && <span><DocumentDuplicateIcon className="h-5 w-5 inline ml-1" /></span>}
+
         </button>
       </div>
     </nav>
