@@ -133,8 +133,7 @@ const Layout = ({ children }) => {
         {/* EXAMPLE CONTENT STRUCTURE - section > div.container  */}
         <section>
           <div className="container mx-auto">
-            {/* <button onClick={handleConnect}> {accounts[0] ? 'Connected: ' + accounts[0] : 'Connect'}</button>
-            <p>{message && message}</p> */}
+
             <p>
               This example adds a property <code>getLayout</code> to your page,
               allowing you to return a React component for the layout. This allows you

@@ -4,6 +4,7 @@ import logoImg from "../public/nextwind-logo-text-dark.png";
 import { useState, useEffect } from "react";
 import { addEllipsis, copyToClipboard } from "../utils/utils";
 import { DocumentDuplicateIcon } from '@heroicons/react/solid'
+import MenuDropdown from "./menuDropdown";
 // import PropTypes from 'prop-types';
 
 const NAV_ITEMS = [
@@ -69,9 +70,9 @@ const Navigation = ({ handleConnect, accounts }) => {
 
   return (
     <nav
-      className={`border-gray container fixed bottom-0 mx-auto flex w-full items-center justify-between border-t-[1px] sm:relative`}
+      className={`fixed bottom-0 mx-auto flex w-full items-center  justify-between border-t-[1px] sm:relative border-gray container`}
     >
-      <div className=" flex h-auto w-44  flex-initial">{logo}</div>
+      <div className=" h-auto w-44  flex-initial flex ">{logo}</div>
       <ul className="flex flex-1 justify-end">
         {NAV_ITEMS.map((item, index) => {
           let name = item.name;
@@ -83,6 +84,7 @@ const Navigation = ({ handleConnect, accounts }) => {
           );
         })}
       </ul>
+      <MenuDropdown />
       <div >
         <button
           className={`rounded-md border-2 border-black px-4 py-2 font-mono text-sm  uppercase tracking-wide hover:border-transparent hover:bg-black hover:text-white focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 overflow-hidden whitespace-nowrap`}
