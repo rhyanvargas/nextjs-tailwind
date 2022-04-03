@@ -1,123 +1,102 @@
-import Head from 'next/head'
-import Navigation from './navigation'
-import PropTypes from 'prop-types';
-import MetaMaskOnboarding from '@metamask/onboarding';
-import detectEthereumProvider from '@metamask/detect-provider';
-import { useState, useEffect, useRef } from 'react';
-import { STATUS } from '../utils/utils.js'
-
-// import { ethers } from 'ethers';
-// import { connectWallet } from '../services/connect.service';
-
+import Head from "next/head";
+import Navigation from "./navigation";
+import MetaMaskOnboarding from "@metamask/onboarding";
+import detectEthereumProvider from "@metamask/detect-provider";
+import { useState, useEffect, useRef } from "react";
+import { STATUS } from "../utils/utils.js";
+import {
+  connectWallet,
+  disconnectWallet,
+  getUserAccounts,
+  getChainAndNetwork,
+} from "../services/wallet.service";
 
 const Layout = ({ children }) => {
-  // STATE 
+  // STATE
   const [buttonText, setButtonText] = useState(STATUS.ONBOARD_TEXT);
   const [isDisabled, setDisabled] = useState(false);
-  const [accounts, setAccounts] = useState([]);
+  const [accounts, setAccounts] = useState(null);
+  const [provider, setProvider] = useState("");
   const [chainId, setChainId] = useState(null);
-  const [message, setMessage] = useState('');
-  const [networkName, setNetworkName] = useState('');
+  const [message, setMessage] = useState("");
+  const [networkName, setNetworkName] = useState("");
   const onboarding = useRef();
 
-
   // EFFECTS
-  useEffect(async () => { // Initial Load
-    const provider = await detectEthereumProvider();
-    if (provider) {
-      setAccounts(await provider.request({ method: "eth_accounts" }))
-    }
+  useEffect(async () => {
     if (!onboarding.current) {
       onboarding.current = new MetaMaskOnboarding();
     }
     if (MetaMaskOnboarding.isMetaMaskInstalled()) {
-      window.ethereum.on('accountsChanged', ((newAccnts) => handleNewAccounts(newAccnts)));
-      window.ethereum.on('chainChanged', ((newChain) => handleNewChain(newChain)));
-    } else {
-
-    }
-    return () => {
-      window.ethereum.removeListener('accountsChanged', ((newAccnts) => handleNewAccounts(newAccnts)));
-      window.ethereum.removeListener('chainChanged', ((newChain) => handleNewChain(newChain)));
-    };
-  }, []);
-  useEffect(() => { // When accounts change
-    if (MetaMaskOnboarding.isMetaMaskInstalled()) {
-      if (accounts.length > 0) {
-        setButtonText(STATUS.CONNECTED_TEXT);
-        setDisabled(true);
-        onboarding.current.stopOnboarding();
-      } else {
-        setChainId('')
-        setNetworkName('')
-        setButtonText(STATUS.CONNECT_TEXT);
-        setDisabled(false);
+      const currentProvider = await detectEthereumProvider();
+      if (currentProvider !== window.ethereum) {
+        // If the provider returned by detectEthereumProvider is not the same as window.ethereum, something is overwriting it, perhaps another wallet.
+        setMessage("Do you have multiple wallets installed?");
       }
-    }
-  }, [accounts]);
-  useEffect(() => { // when chain ID changes
-    if (MetaMaskOnboarding.isMetaMaskInstalled()) {
-      if (chainId) {
-        switch (chainId) {
-          case "0x1":
-            setNetworkName('Ethereum Main Network (Mainnet)')
-            break;
-          case "0x3":
-            setNetworkName('Ropsten Test Network');
-            break;
-          case "0x4":
-            setNetworkName('Rinkeby Test Network');
-            break;
-          case "0x5":
-            setNetworkName('Goerli Test Network');
-            break;
-          case "0x2a":
-            setNetworkName('Kovan Test Network');
-            break;
-          case "0x89":
-            setNetworkName('Polygon Mainnet');
-            break;
-          case "0x13881":
-            setNetworkName('Mumbai Test Network (Polygon)');
-            break;
-          default:
-            break;
+
+      if (
+        currentProvider &&
+        localStorage.getItem("wallet-connected") !== null
+      ) {
+        try {
+          setProvider(currentProvider);
+          let accountsObj = await getUserAccounts(currentProvider);
+          setAccounts(accountsObj);
+          setMessage(accountsObj.status);
+          setChainId(accountsObj.chainId);
+          setNetworkName(accountsObj.networkName);
+
+          window.ethereum.on("accountsChanged", (newAccnts) => {
+            window.location.reload();
+          });
+          window.ethereum.on("chainChanged", (newChain) =>
+            window.location.reload()
+          );
+        } catch (error) {
+          setMessage("ERROR USEEFFECT:" + error?.message);
         }
       }
-    }
-  }, [chainId]);
-
-  // HANDLERS
-  const handleNewAccounts = (newAccounts) => {
-    setAccounts(newAccounts);
-  }
-  const handleNewChain = (newChainId) => {
-    setChainId(newChainId);
-    // window.location.reload()
-  }
-
-  const handleConnect = () => {
-    if (MetaMaskOnboarding.isMetaMaskInstalled()) {
-      window.ethereum
-        .request({ method: 'eth_requestAccounts' })
-        .then(handleNewAccounts)
-        .catch((error) => {
-          if (error.code === 4001) {
-            // EIP-1193 userRejectedRequest error
-            setMessage(STATUS.MISSING_METAMASK_TEXT);
-            console.log(STATUS.MISSING_METAMASK_TEXT);
-          } else {
-            return setMessage(error.message);
-          }
-        });
-      window.ethereum
-        .request({ method: 'eth_chainId' })
-        .then(handleNewChain);
-
     } else {
       onboarding.current.startOnboarding();
     }
-  }
+
+    return () => {
+      window.ethereum.removeListener("accountsChanged", (newAccnts) => {
+        window.location.reload();
+      });
+      window.ethereum.removeListener("chainChanged", (newChain) =>
+        window.location.reload()
+      );
+    };
+  }, []);
+
+  // HANDLERS
+  const handleConnect = async () => {
+    let connObj = await connectWallet(provider);
+    if (connObj) {
+      console.log("CONNECT OBJ: ", connObj);
+      setAccounts(connObj);
+      setMessage(connObj.status);
+      setChainId(connObj.chainId);
+      setNetworkName(connObj.networkName);
+    }
+    // store in cache
+    localStorage.setItem("wallet-connected", "CONNECTED");
+    window.location.reload();
+  };
+
+  const handleDisconnect = () => {
+    let obj = disconnectWallet(provider);
+    if (obj) {
+      console.log("Disconnect OBJ: ", obj);
+      setAccounts("");
+      setChainId("");
+      setNetworkName("");
+      setMessage(obj.status);
+      // clear cache connection
+      localStorage.clear();
+    }
+  };
 
   return (
     <>
@@ -126,41 +105,26 @@ const Layout = ({ children }) => {
         <meta name="description" content="Generated by create next app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Navigation handleConnect={handleConnect} accounts={accounts} />
-      <main className='mx-auto'>
+      <Navigation
+        handleConnect={handleConnect}
+        accounts={accounts}
+        handleDisconnect={handleDisconnect}
+      />
+      <main className="mx-auto">
         {/* use <section> tags in page level to seperate content */}
         {children}
         {/* EXAMPLE CONTENT STRUCTURE - section > div.container  */}
         <section>
           <div className="container mx-auto">
-
-            <p>
-              This example adds a property <code>getLayout</code> to your page,
-              allowing you to return a React component for the layout. This allows you
-              to define the layout on a per-page basis. Since we're returning a
-              function, we can have complex nested layouts if desired.
-            </p>
-            <p>
-              When navigating between pages, we want to persist page state (input
-              values, scroll position, etc) for a Single-Page Application (SPA)
-              experience.
-            </p>
-            <p>
-              This layout pattern will allow for state persistence because the React
-              component tree is persisted between page transitions. To preserve state,
-              we need to prevent the React component tree from being discarded between
-              page transitions.
-            </p>
+            {accounts && <p>Account: {accounts.address}</p>}
+            {message && <p>STATUS MESSAGE: {message}</p>}
+            {chainId && <p>chainId: {chainId}</p>}
+            {networkName && <p>networkName: {networkName}</p>}
           </div>
         </section>
       </main>
     </>
-  )
-};
-
-Layout.propTypes = {
-  children: PropTypes.any
+  );
 };
 
 export default Layout;
-
