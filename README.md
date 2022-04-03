@@ -9,8 +9,7 @@ Used to accomplish the three most common requirements for web3 sites:
 3. Get the user's Ethereum account(s)
 
 ## Getting Started
-
-_Clone this repo, then follow the below instructions:_
+Clone repo: `git clone https://github.com/rhyanvargas/nextjs-tailwind.git`
 
 1. Install dependencies
 
