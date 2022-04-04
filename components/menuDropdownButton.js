@@ -7,8 +7,7 @@ import {
   LoginIcon,
 } from "@heroicons/react/solid";
 import { MetamaskIcon } from "../utils/icons";
-import { copyToClipboard } from "../utils/utils";
-import Link from "next/link";
+import { copyToClipboard, notify } from "../utils/utils";
 
 const ACTIVE_COLOR = "bg-black text-white";
 
@@ -26,6 +25,13 @@ export default function MenuDropdownButton({
   const handleOnDisconnectButton = () => {
     setConnected(false);
     handleOnDisconnect();
+  };
+
+  const handleOnCopyButton = async () => {
+    if (accounts) {
+      await copyToClipboard(accounts.address);
+      notify("Address copied to clipboard!");
+    }
   };
 
   return (
@@ -49,7 +55,7 @@ export default function MenuDropdownButton({
         >
           <Menu.Items className=" right-0 mt-2 w-56 origin-top divide-y divide-gray-100 rounded-md bg-white shadow-lg  ring-1 ring-black  ring-opacity-5 focus:outline-none md:absolute  md:origin-top-right">
             {accounts
-              ? showUserOptions(handleOnDisconnectButton)
+              ? showUserOptions(handleOnDisconnectButton, handleOnCopyButton)
               : showConnectOptions(handleOnConnectButton)}
           </Menu.Items>
         </Transition>
@@ -77,10 +83,10 @@ const showConnectOptions = (handleOnConnectButton) => {
   );
 };
 
-const showUserOptions = (handleOnDisconnectButton) => {
+const showUserOptions = (handleOnDisconnectButton, handleOnCopyButton) => {
   return (
     <div className="px-1 py-1">
-      <Menu.Item>
+      <Menu.Item onClick={handleOnCopyButton}>
         {({ active }) => (
           <button
             className={`${

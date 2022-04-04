@@ -47,11 +47,11 @@ const Layout = ({ children }) => {
           setNetworkName(accountsObj.networkName);
 
           window.ethereum.on("accountsChanged", (newAccnts) => {
-            window.location.reload();
+            if (newAccnts > 0) window.location.reload();
           });
-          window.ethereum.on("chainChanged", (newChain) =>
-            window.location.reload()
-          );
+          window.ethereum.on("chainChanged", (newChain) => {
+            if (newChain > 0) window.location.reload();
+          });
         } catch (error) {
           setMessage("ERROR USEEFFECT:" + error?.message);
         }
@@ -62,11 +62,11 @@ const Layout = ({ children }) => {
 
     return () => {
       window.ethereum.removeListener("accountsChanged", (newAccnts) => {
-        window.location.reload();
+        if (newAccnts > 0) window.location.reload();
       });
-      window.ethereum.removeListener("chainChanged", (newChain) =>
-        window.location.reload()
-      );
+      window.ethereum.removeListener("chainChanged", (newChain) => {
+        if (newChain > 0) window.location.reload();
+      });
     };
   }, []);
 

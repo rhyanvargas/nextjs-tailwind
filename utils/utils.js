@@ -38,12 +38,15 @@ export const addEllipsis = (str) => {
 };
 
 export const copyToClipboard = async (str) => {
-  try {
-    if ("clipboard" in navigator) {
-      alert("Copied to Clipboard!");
-      await navigator.clipboard.writeText(str);
+  if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
+    try {
+      return await navigator.clipboard.writeText(str);
+    } catch (error) {
+      console.log("The Clipboard API is not available: ", error);
     }
-  } catch (error) {
-    console.log(error);
   }
+};
+
+export const notify = (message) => {
+  alert(message);
 };
