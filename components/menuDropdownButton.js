@@ -1,10 +1,9 @@
 import { Menu, Transition } from "@headlessui/react";
 import React, { Fragment, useState } from "react";
 import {
-  ChevronDownIcon,
   DocumentDuplicateIcon,
   LogoutIcon,
-  LoginIcon,
+  MenuIcon,
 } from "@heroicons/react/solid";
 import { MetamaskIcon } from "../utils/icons";
 import { copyToClipboard, notify } from "../utils/utils";
@@ -16,14 +15,10 @@ export default function MenuDropdownButton({
   handleOnConnect,
   handleOnDisconnect,
 }) {
-  const [isConnected, setConnected] = useState();
-
   const handleOnConnectButton = async () => {
-    setConnected(true);
     await handleOnConnect();
   };
   const handleOnDisconnectButton = () => {
-    setConnected(false);
     handleOnDisconnect();
   };
 
@@ -39,9 +34,10 @@ export default function MenuDropdownButton({
       <Menu as="div" className="relative inline-block text-left">
         <div>
           <Menu.Button
-            className={`overflow-hidden whitespace-nowrap rounded-md border-2 border-black px-4  py-2 font-mono text-sm capitalize tracking-wide hover:border-transparent hover:bg-black hover:text-white focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 `}
+            className={` flex h-10 overflow-hidden whitespace-nowrap rounded-md border-2 border-black px-4  py-2 font-mono text-sm capitalize tracking-wide hover:border-transparent hover:bg-black hover:text-white focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 `}
           >
-            {accounts ? "🦊 " + accounts.ellipAddress : "Connect Wallet"}
+            {accounts ? buttonText(accounts) : "Connect Wallet"}
+            {accounts && <MenuIcon className="ml-2 h-5 w-5" />}
           </Menu.Button>
         </div>
         <Transition
@@ -53,7 +49,11 @@ export default function MenuDropdownButton({
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <Menu.Items className=" right-0 mt-2 w-56 origin-top divide-y divide-gray-100 rounded-md bg-white shadow-lg  ring-1 ring-black  ring-opacity-5 focus:outline-none md:absolute  md:origin-top-right">
+          <Menu.Items
+            className={`absolute right-0 ${
+              accounts ? "top-[calc(-100%-60px)]" : "top-[calc(-100%-20px)]"
+            } mt-2 w-56 origin-bottom  divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none md:top-[100%] md:origin-top-right`}
+          >
             {accounts
               ? showUserOptions(handleOnDisconnectButton, handleOnCopyButton)
               : showConnectOptions(handleOnConnectButton)}
@@ -63,6 +63,9 @@ export default function MenuDropdownButton({
     </div>
   );
 }
+
+// CONDITIONAL COMPONENTS
+const buttonText = (accounts) => `🦊 ${accounts.ellipAddress} `;
 
 const showConnectOptions = (handleOnConnectButton) => {
   return (

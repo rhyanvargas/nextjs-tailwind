@@ -62,7 +62,6 @@ export const getUserAccounts = async (provider) => {
     let chainInfo = await getChainAndNetwork(provider);
 
     if (accounts > 0) {
-      console.log("getUserAccounts:", accounts[0]);
       let accountsObj = {
         address: accounts[0],
         ellipAddress: addEllipsis(accounts[0]),

@@ -2,7 +2,6 @@ import Link from "next/link";
 import Image from "next/image";
 import logoImg from "../public/nextwind-logo-text-dark.png";
 import { useState, useEffect } from "react";
-import { DocumentDuplicateIcon } from "@heroicons/react/solid";
 import MenuDropDownButton from "./menuDropdownButton";
 
 const NAV_ITEMS = [
@@ -51,7 +50,7 @@ const Navigation = ({ handleConnect, handleDisconnect, accounts }) => {
           let name = item.name;
           let url = item.url;
           return (
-            <li className={`px-4`} key={`${item}.toString + ${index}`}>
+            <li className={`flex px-4`} key={`${item}.toString + ${index}`}>
               {navItem(name, url)}
             </li>
           );

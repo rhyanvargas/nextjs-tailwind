@@ -3,17 +3,15 @@ import Navigation from "./navigation";
 import MetaMaskOnboarding from "@metamask/onboarding";
 import detectEthereumProvider from "@metamask/detect-provider";
 import { useState, useEffect, useRef } from "react";
-import { STATUS } from "../utils/utils.js";
 import {
   connectWallet,
   disconnectWallet,
   getUserAccounts,
-  getChainAndNetwork,
-} from "../services/wallet.service";
+} from "../services/blockApi.service";
 
 const Layout = ({ children }) => {
   // STATE
-  const [buttonText, setButtonText] = useState(STATUS.ONBOARD_TEXT);
+
   const [isDisabled, setDisabled] = useState(false);
   const [accounts, setAccounts] = useState(null);
   const [provider, setProvider] = useState("");
