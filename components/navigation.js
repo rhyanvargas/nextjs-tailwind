@@ -32,7 +32,7 @@ const logo = (
   />
 );
 
-const Navigation = ({ handleConnect, handleDisconnect, accounts }) => {
+const Navigation = ({ handleConnect, handleDisconnect, address }) => {
   const handleOnConnect = () => {
     handleConnect();
   };
@@ -42,7 +42,7 @@ const Navigation = ({ handleConnect, handleDisconnect, accounts }) => {
 
   return (
     <nav
-      className={`border-gray container fixed bottom-0 mx-auto  flex w-full items-center justify-between border-t-[1px] sm:relative `}
+      className={`border-gray container fixed bottom-0 mx-auto  flex w-full items-center justify-between border-t-[1px] py-2 sm:relative `}
     >
       <div className=" flex h-auto  w-44 flex-initial ">{logo}</div>
       <ul className="flex flex-1 justify-end">
@@ -57,7 +57,7 @@ const Navigation = ({ handleConnect, handleDisconnect, accounts }) => {
         })}
       </ul>
       <MenuDropDownButton
-        accounts={accounts}
+        address={address}
         handleOnConnect={handleOnConnect}
         handleOnDisconnect={handleOnDisconnect}
       />

@@ -8,92 +8,62 @@ import {
   disconnectWallet,
   getUserAccounts,
 } from "../services/blockApi.service";
+import { ethers } from "ethers";
+import Alert from "./alert";
 
 const Layout = ({ children }) => {
   // STATE
-
-  const [isDisabled, setDisabled] = useState(false);
-  const [accounts, setAccounts] = useState(null);
-  const [provider, setProvider] = useState("");
-  const [chainId, setChainId] = useState(null);
-  const [message, setMessage] = useState("");
-  const [networkName, setNetworkName] = useState("");
-  const onboarding = useRef();
-
+  const [address, setAddress] = useState("");
+  const [chainId, setChainId] = useState("");
+  const [network, setNetwork] = useState("");
+  const [provider, setProvider] = useState();
+  const [signer, setSigner] = useState();
+  const [alert, setAlert] = useState({
+    type: "error",
+    message: " HEY THIS IS ERROR",
+  });
   // EFFECTS
   useEffect(async () => {
-    if (!onboarding.current) {
-      onboarding.current = new MetaMaskOnboarding();
-    }
-    if (MetaMaskOnboarding.isMetaMaskInstalled()) {
-      const currentProvider = await detectEthereumProvider();
-      if (currentProvider !== window.ethereum) {
-        // If the provider returned by detectEthereumProvider is not the same as window.ethereum, something is overwriting it, perhaps another wallet.
-        setMessage("Do you have multiple wallets installed?");
+    let ethProvider = await detectEthereumProvider();
+    if (ethProvider.isConnected() && localStorage.getItem("connected")) {
+      let accountObj = await getUserAccounts(ethProvider);
+      if (accountObj) {
+        setAddress(accountObj.address);
+        setChainId(accountObj.chainId);
+        setNetwork(accountObj.network);
+        console.log("uesEffect obj: ", accountObj);
       }
-
-      if (
-        currentProvider &&
-        localStorage.getItem("wallet-connected") !== null
-      ) {
-        try {
-          setProvider(currentProvider);
-          let accountsObj = await getUserAccounts(currentProvider);
-          setAccounts(accountsObj);
-          setMessage(accountsObj.status);
-          setChainId(accountsObj.chainId);
-          setNetworkName(accountsObj.networkName);
-
-          window.ethereum.on("accountsChanged", (newAccnts) => {
-            if (newAccnts > 0) window.location.reload();
-          });
-          window.ethereum.on("chainChanged", (newChain) => {
-            if (newChain > 0) window.location.reload();
-          });
-        } catch (error) {
-          setMessage("ERROR USEEFFECT:" + error?.message);
-        }
-      }
-    } else {
-      onboarding.current.startOnboarding();
     }
-
-    return () => {
-      window.ethereum.removeListener("accountsChanged", (newAccnts) => {
-        if (newAccnts > 0) window.location.reload();
-      });
-      window.ethereum.removeListener("chainChanged", (newChain) => {
-        if (newChain > 0) window.location.reload();
-      });
-    };
+    // LISTENER EVENTS
+    ethereum.on("accountsChanged", () => {
+      window.location.reload();
+    });
+    ethereum.on("chainChanged", (newChain) => {
+      window.location.reload();
+    });
+    // CLEANUP EVENTS
+    ethereum.removeListener("chainChanged", () => {
+      window.location.reload();
+    });
+    ethereum.removeListener("accountsChanged", () => {
+      window.location.reload();
+    });
   }, []);
 
   // HANDLERS
   const handleConnect = async () => {
-    let connObj = await connectWallet(provider);
-    if (connObj) {
-      console.log("CONNECT OBJ: ", connObj);
-      setAccounts(connObj);
-      setMessage(connObj.status);
-      setChainId(connObj.chainId);
-      setNetworkName(connObj.networkName);
+    let accountObj = await connectWallet();
+    if (accountObj) {
+      setAddress(accountObj.address);
+      setChainId(accountObj.chainId);
+      setNetwork(accountObj.network);
     }
-    // store in cache
-    localStorage.setItem("wallet-connected", "CONNECTED");
     window.location.reload();
   };
 
-  const handleDisconnect = () => {
-    let obj = disconnectWallet(provider);
-    if (obj) {
-      console.log("Disconnect OBJ: ", obj);
-      setAccounts("");
-      setChainId("");
-      setNetworkName("");
-      setMessage(obj.status);
-      // clear cache connection
-      localStorage.clear();
-    }
+  const handleDisconnect = async () => {
+    await disconnectWallet();
+    window.location.reload();
   };
 
   return (
@@ -105,7 +75,7 @@ const Layout = ({ children }) => {
       </Head>
       <Navigation
         handleConnect={handleConnect}
-        accounts={accounts}
+        address={address}
         handleDisconnect={handleDisconnect}
       />
       <main className="mx-auto">
@@ -114,12 +84,13 @@ const Layout = ({ children }) => {
         {/* EXAMPLE CONTENT STRUCTURE - section > div.container  */}
         <section>
           <div className="container mx-auto">
-            {accounts && <p>Account: {accounts.address}</p>}
-            {message && <p>STATUS MESSAGE: {message}</p>}
+            {address > 0 && <p>address: {address}</p>}
             {chainId && <p>chainId: {chainId}</p>}
-            {networkName && <p>networkName: {networkName}</p>}
+            {network && <p>network: {network}</p>}
+            {/* {message && <p>STATUS MESSAGE: {message}</p>} */}
           </div>
         </section>
+        {alert && <Alert alertObj={alert} />}
       </main>
     </>
   );

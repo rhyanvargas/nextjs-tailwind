@@ -46,7 +46,3 @@ export const copyToClipboard = async (str) => {
     }
   }
 };
-
-export const notify = (message) => {
-  alert(message);
-};

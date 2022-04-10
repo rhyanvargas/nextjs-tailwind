@@ -6,26 +6,35 @@ import {
   MenuIcon,
 } from "@heroicons/react/solid";
 import { MetamaskIcon } from "../utils/icons";
-import { copyToClipboard, notify } from "../utils/utils";
+import { addEllipsis, copyToClipboard } from "../utils/utils";
 
 const ACTIVE_COLOR = "bg-black text-white";
 
 export default function MenuDropdownButton({
-  accounts,
+  address,
   handleOnConnect,
   handleOnDisconnect,
 }) {
   const handleOnConnectButton = async () => {
-    await handleOnConnect();
+    try {
+      await handleOnConnect();
+    } catch (error) {
+      console.log("ERROR", error);
+    }
   };
   const handleOnDisconnectButton = () => {
-    handleOnDisconnect();
+    try {
+      handleOnDisconnect();
+    } catch (error) {
+      console.log("ERROR", error);
+    }
   };
 
   const handleOnCopyButton = async () => {
-    if (accounts) {
-      await copyToClipboard(accounts.address);
-      notify("Address copied to clipboard!");
+    if (address > 0) {
+      try {
+        await copyToClipboard(address);
+      } catch (error) {}
     }
   };
 
@@ -36,8 +45,8 @@ export default function MenuDropdownButton({
           <Menu.Button
             className={` flex h-10 overflow-hidden whitespace-nowrap rounded-md border-2 border-black px-4  py-2 font-mono text-sm capitalize tracking-wide hover:border-transparent hover:bg-black hover:text-white focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 `}
           >
-            {accounts ? buttonText(accounts) : "Connect Wallet"}
-            {accounts && <MenuIcon className="ml-2 h-5 w-5" />}
+            {address ? buttonText(address) : "Connect Wallet"}
+            {address && <MenuIcon className="ml-2 h-5 w-5" />}
           </Menu.Button>
         </div>
         <Transition
@@ -51,10 +60,10 @@ export default function MenuDropdownButton({
         >
           <Menu.Items
             className={`absolute right-0 ${
-              accounts ? "top-[calc(-100%-60px)]" : "top-[calc(-100%-20px)]"
+              address ? "top-[calc(-100%-60px)]" : "top-[calc(-100%-20px)]"
             } mt-2 w-56 origin-bottom  divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none md:top-[100%] md:origin-top-right`}
           >
-            {accounts
+            {address
               ? showUserOptions(handleOnDisconnectButton, handleOnCopyButton)
               : showConnectOptions(handleOnConnectButton)}
           </Menu.Items>
@@ -65,7 +74,10 @@ export default function MenuDropdownButton({
 }
 
 // CONDITIONAL COMPONENTS
-const buttonText = (accounts) => `🦊 ${accounts.ellipAddress} `;
+const buttonText = (_address) => {
+  let ellipsis = addEllipsis(_address);
+  return `🦊 ${ellipsis} `;
+};
 
 const showConnectOptions = (handleOnConnectButton) => {
   return (
@@ -97,7 +109,7 @@ const showUserOptions = (handleOnDisconnectButton, handleOnCopyButton) => {
             } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
           >
             <DocumentDuplicateIcon className={`mr-2 h-5 w-5`} />
-            Copy Address
+            Copy address
           </button>
         )}
       </Menu.Item>

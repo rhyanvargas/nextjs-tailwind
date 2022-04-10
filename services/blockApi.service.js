@@ -1,56 +1,51 @@
 import detectEthereumProvider from "@metamask/detect-provider";
 import { STATUS, addEllipsis } from "../utils/utils";
+// import { ethers } from "ethers";
 
-export const disconnectWallet = (provider) => {
-  if (provider) {
-    return {
-      status: STATUS.DISCONNECT_WALLET_INFO,
-      address: null,
-      chainId: "",
-      networkName: "",
-    };
-  }
+export const disconnectWallet = () => {
+  localStorage.clear();
 };
 
-export const connectWallet = async (provider) => {
+export const connectWallet = async () => {
+  const provider = await detectEthereumProvider();
   let obj = {};
   if (provider) {
     try {
-      // Not connected...
-      if (!provider.isConnected()) {
-        obj.address = await provider.request({
-          method: "eth_requestAccounts",
-        })[0];
-      }
-      // already connected, do this...
-      let userAccounts = await getUserAccounts(provider);
-      let chainInfo = await getChainAndNetwork(provider);
-      obj.address = userAccounts.address;
-      obj.ellipAddress = userAccounts.ellipAddress;
-      obj.chainId = chainInfo.chainId;
-      obj.networkName = chainInfo.networkName;
-      obj.status = STATUS.CONNECTED_TEXT;
-      console.log("CONNECT WALLET: ", obj);
+      let accounts = await ethereum.request({ method: "eth_requestAccounts" });
+      let address = accounts && accounts[0];
+      let obj = {
+        provider: provider,
+        address,
+        message: STATUS.CONNECTED_TEXT,
+      };
+      localStorage.setItem("connected", "true");
       return obj;
-    } catch (err) {
-      return (obj.status = "ERROR: " + err);
+    } catch (error) {
+      obj.message = error.message;
+      if (error.code == "4001") {
+        obj.message = STATUS.REJECT_TEXT;
+      }
+      return obj;
     }
+  } else {
+    console.log("Please install MetaMask!");
   }
 };
 
 export const getChainAndNetwork = async (provider) => {
   try {
     let chainId = await provider?.request({ method: "eth_chainId" });
-    let networkName = getNetworkNameFromChainId(chainId);
+    let network = getNetworkNameFromChainId(chainId);
     return {
       chainId,
-      networkName,
+      network,
       status: "",
     };
   } catch (error) {
+    console.log(error);
     return {
       chainId: "",
-      networkName: "",
+      network: "",
       status: "ERROR: Getting chain Id",
     };
   }
@@ -66,17 +61,18 @@ export const getUserAccounts = async (provider) => {
         address: accounts[0],
         ellipAddress: addEllipsis(accounts[0]),
         chainId: chainInfo.chainId,
-        networkName: chainInfo.networkName,
+        network: chainInfo.network,
         status: STATUS.CONNECTED_TEXT,
       };
       console.log("getUserAccounts - return obj:", accountsObj);
       return accountsObj;
     }
   } catch (error) {
+    console.log(error);
     return {
       address: accounts,
       chainId: "",
-      networkName: "",
+      network: "",
       status: `Error Message: ` + err.message,
     };
   }
