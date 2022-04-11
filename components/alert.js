@@ -1,19 +1,25 @@
 import { useState } from "react";
-import { ExclamationCircleIcon } from "@heroicons/react/solid";
+import { ExclamationCircleIcon, CheckCircleIcon } from "@heroicons/react/solid";
 
 const Alert = ({ alertObj }) => {
   const { type, message } = alertObj;
-  console.log(alertObj);
   const [isShowing, setShowing] = useState(alertObj !== null ? true : false);
   let obj = {
-    styles: `text-sm flex-col justify-between space-y-2 align-center absolute w-3/4 left-0 right-0 mx-auto bottom-[10%] rounded border px-3 py-3 `,
+    styles: `text-sm flex-col justify-between space-y-2 align-center absolute w-3/4 left-0 right-0 mx-auto bottom-[10%] rounded border px-3 py-3  ${
+      type == "error" && "bg-red-100 border-red-400 text-red-700"
+    } ${type == "success" && "bg-green-100 border-green-400 text-green-700"}`,
   };
   if (type) {
     let lowercaseType = type.toLowerCase();
+    let baseColor;
     switch (lowercaseType) {
       case "error":
         obj.title = "Oops! We hit a snag...";
-        obj.styles = `${obj.styles} bg-red-100 border-red-400 text-red-700 `;
+        obj.message = message;
+        break;
+
+      case "success":
+        obj.title = "Success!";
         obj.message = message;
         break;
 
@@ -29,7 +35,11 @@ const Alert = ({ alertObj }) => {
   return (
     <div className={`${isShowing ? obj.styles : "hidden"}`} role="alert">
       <div className={`flex space-x-1`}>
-        <ExclamationCircleIcon className={`h-5 w-5 `} />
+        {obj.title == "error" ? (
+          <ExclamationCircleIcon className={`h-5 w-5 `} />
+        ) : (
+          <CheckCircleIcon className={`h-5 w-5 `} />
+        )}
         <span className="font-bold">{obj?.title}</span>
       </div>
       <div>

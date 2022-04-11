@@ -18,7 +18,7 @@ const Layout = ({ children }) => {
   const [network, setNetwork] = useState("");
   const [provider, setProvider] = useState();
   const [signer, setSigner] = useState();
-  const [alert, setAlert] = useState(null);
+  const [alert, setAlert] = useState({ type: "success", message: "test" });
   // EFFECTS
   useEffect(async () => {
     let ethProvider = await detectEthereumProvider();
