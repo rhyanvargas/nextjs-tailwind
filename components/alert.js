@@ -1,16 +1,18 @@
 import { useState } from "react";
+import { ExclamationCircleIcon } from "@heroicons/react/solid";
 
 const Alert = ({ alertObj }) => {
   const { type, message } = alertObj;
-  const [isShowing, setShowing] = useState(alertObj ? true : false);
+  console.log(alertObj);
+  const [isShowing, setShowing] = useState(alertObj !== null ? true : false);
   let obj = {
-    styles: `flex justify-between align-center absolute w-3/4 left-0 right-0 mx-auto bottom-[10%] rounded border px-3 py-3 `,
+    styles: `text-sm flex-col justify-between space-y-2 align-center absolute w-3/4 left-0 right-0 mx-auto bottom-[10%] rounded border px-3 py-3 `,
   };
   if (type) {
     let lowercaseType = type.toLowerCase();
     switch (lowercaseType) {
       case "error":
-        obj.title = "ERROR";
+        obj.title = "Oops! We hit a snag...";
         obj.styles = `${obj.styles} bg-red-100 border-red-400 text-red-700 `;
         obj.message = message;
         break;
@@ -26,14 +28,15 @@ const Alert = ({ alertObj }) => {
 
   return (
     <div className={`${isShowing ? obj.styles : "hidden"}`} role="alert">
-      <div className={`flex `}>
-        <span>
-          <strong className="font-bold">{obj?.title} </strong>
-        </span>
-        <span className="ml-1 ">{obj?.message}</span>
+      <div className={`flex space-x-1`}>
+        <ExclamationCircleIcon className={`h-5 w-5 `} />
+        <span className="font-bold">{obj?.title}</span>
       </div>
-      <button className={`align-end px-4`} onClick={handleCloseAlert}>
-        <span className="">
+      <div>
+        <span className="">{obj?.message}</span>
+      </div>
+      <button className={`absolute top-3 right-3 `} onClick={handleCloseAlert}>
+        <span className={``}>
           <svg
             className={`text-${obj.color}-500 h-6 w-6 fill-current`}
             role="button"

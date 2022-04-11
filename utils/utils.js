@@ -24,6 +24,8 @@ export const STATUS = {
       wallet.
     </a>
   ),
+  METAMASK_PROCESSING:
+    "Please click on your metamask extension for pending action - or login metamask again.",
 };
 
 export const addEllipsis = (str) => {

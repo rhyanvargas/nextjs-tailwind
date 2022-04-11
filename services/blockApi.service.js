@@ -25,6 +25,9 @@ export const connectWallet = async () => {
       if (error.code == "4001") {
         obj.message = STATUS.REJECT_TEXT;
       }
+      if (error.code == "-32002") {
+        obj.message = STATUS.METAMASK_PROCESSING;
+      }
       return obj;
     }
   } else {

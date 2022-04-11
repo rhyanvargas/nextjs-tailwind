@@ -18,10 +18,7 @@ const Layout = ({ children }) => {
   const [network, setNetwork] = useState("");
   const [provider, setProvider] = useState();
   const [signer, setSigner] = useState();
-  const [alert, setAlert] = useState({
-    type: "error",
-    message: " HEY THIS IS ERROR",
-  });
+  const [alert, setAlert] = useState(null);
   // EFFECTS
   useEffect(async () => {
     let ethProvider = await detectEthereumProvider();
@@ -53,12 +50,14 @@ const Layout = ({ children }) => {
   // HANDLERS
   const handleConnect = async () => {
     let accountObj = await connectWallet();
-    if (accountObj) {
+    setAlert(() => ({ type: "error", message: accountObj.message }));
+    console.log(accountObj.message);
+    if (accountObj.address > 0) {
       setAddress(accountObj.address);
       setChainId(accountObj.chainId);
       setNetwork(accountObj.network);
+      window.location.reload();
     }
-    window.location.reload();
   };
 
   const handleDisconnect = async () => {
