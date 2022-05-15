@@ -2,7 +2,8 @@ import { useState } from "react";
 import { ExclamationCircleIcon, CheckCircleIcon } from "@heroicons/react/solid";
 
 interface Props {
-  alertObj?: { type: string, message: string }
+  type?: string,
+  message?: string
 }
 interface AlertConfig {
   color?: string,
@@ -12,10 +13,10 @@ interface AlertConfig {
 }
 
 
-const Alert = (props: Props) => {
-  const { alertObj } = props;
-  const [isShowing, setShowing] = useState(alertObj !== null ? true : false);
-  const config = alert_config(alertObj);
+const Alert = ({ type, message }: Props) => {
+  const [isShowing, setShowing] = useState(type && message ? true : false);
+
+  const config = type && message ? alert_config(type, message) : null;
 
   const handleCloseAlert = () => {
     setShowing(false);
@@ -52,23 +53,23 @@ const Alert = (props: Props) => {
   );
 };
 
-function alert_config(alertObj?: { type: string, message: string }) {
+function alert_config(type: string, message: string) {
   let config: AlertConfig = {
     color: 'black',
     styles: 'text-sm flex-col justify-between space-y-2 align-center absolute w-3/4 left-0 right-0 mx-auto bottom-[10%] rounded border px-3 py-3'
   };
 
-  if (alertObj?.type) {
-    switch (alertObj?.type.toLowerCase()) {
+  if (type) {
+    switch (type.toLowerCase()) {
       case "error":
         config.title = "Oops! We hit a snag...";
-        config.message = alertObj.message;
+        config.message = message;
         config.styles += " bg-red-100 border-red-400 text-red-700";
         break;
 
       case "success":
         config.title = "Success!";
-        config.message = alertObj.message;
+        config.message = message;
         config.styles += " bg-green-100 border-green-400 text-green-700";
         break;
 

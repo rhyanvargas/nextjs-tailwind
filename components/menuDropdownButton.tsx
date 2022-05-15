@@ -10,31 +10,17 @@ import { addEllipsis, copyToClipboard } from "../utils/utils";
 
 const ACTIVE_COLOR = "bg-black text-white";
 
-export default function MenuDropdownButton({
-  address,
-  handleOnConnect,
-  handleOnDisconnect,
-}) {
-  const handleOnConnectButton = async () => {
-    try {
-      await handleOnConnect();
-    } catch (error) {
-      console.log("ERROR", error);
-    }
-  };
-  const handleOnDisconnectButton = () => {
-    try {
-      handleOnDisconnect();
-    } catch (error) {
-      console.log("ERROR", error);
-    }
-  };
+interface Props {
+  address: string,
+  walletConnectors: Array<Function>
+}
+const MenuDropdownButtons = ({ address, walletConnectors }: Props) => {
 
   const handleOnCopyButton = async () => {
-    if (address > 0) {
+    if (address.length > 0) {
       try {
         await copyToClipboard(address);
-      } catch (error) {}
+      } catch (error) { }
     }
   };
 
@@ -59,9 +45,8 @@ export default function MenuDropdownButton({
           leaveTo="transform opacity-0 scale-95"
         >
           <Menu.Items
-            className={`absolute right-0 ${
-              address ? "top-[calc(-100%-60px)]" : "top-[calc(-100%-20px)]"
-            } mt-2 w-56 origin-bottom  divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none md:top-[100%] md:origin-top-right`}
+            className={`absolute right-0 ${address ? "top-[calc(-100%-60px)]" : "top-[calc(-100%-20px)]"
+              } mt-2 w-56 origin-bottom  divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none md:top-[100%] md:origin-top-right`}
           >
             {address
               ? showUserOptions(handleOnDisconnectButton, handleOnCopyButton)
@@ -85,9 +70,8 @@ const showConnectOptions = (handleOnConnectButton) => {
       <Menu.Item onClick={handleOnConnectButton}>
         {({ active }) => (
           <button
-            className={`${
-              active ? ACTIVE_COLOR : "text-gray-900"
-            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+            className={`${active ? ACTIVE_COLOR : "text-gray-900"
+              } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
           >
             <MetamaskIcon className={`mr-2 h-5 w-5`} />
             Metamask
@@ -104,9 +88,8 @@ const showUserOptions = (handleOnDisconnectButton, handleOnCopyButton) => {
       <Menu.Item onClick={handleOnCopyButton}>
         {({ active }) => (
           <button
-            className={`${
-              active ? ACTIVE_COLOR : "text-gray-900"
-            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+            className={`${active ? ACTIVE_COLOR : "text-gray-900"
+              } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
           >
             <DocumentDuplicateIcon className={`mr-2 h-5 w-5`} />
             Copy address
@@ -116,9 +99,8 @@ const showUserOptions = (handleOnDisconnectButton, handleOnCopyButton) => {
       <Menu.Item onClick={handleOnDisconnectButton}>
         {({ active }) => (
           <button
-            className={`${
-              active ? ACTIVE_COLOR : "text-gray-900"
-            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+            className={`${active ? ACTIVE_COLOR : "text-gray-900"
+              } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
           >
             <LogoutIcon className="mr-2 h-5 w-5" aria-hidden="true" />
             Disconnect Wallet
@@ -128,3 +110,5 @@ const showUserOptions = (handleOnDisconnectButton, handleOnCopyButton) => {
     </div>
   );
 };
+
+export default MenuDropdownButtons;
