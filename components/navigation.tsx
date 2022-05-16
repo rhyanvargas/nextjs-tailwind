@@ -8,7 +8,7 @@ import Web3WalletContext from "../context/Web3WalletContext";
 interface Props { }
 const Navigation = (props: Props) => {
 
-  const wallet_context = useContext(Web3WalletContext)
+  const { walletConnectors, walletDisconnect, connectedWallet } = useContext(Web3WalletContext)
 
   return (
     <nav
@@ -26,7 +26,11 @@ const Navigation = (props: Props) => {
           );
         })}
       </ul>
-      {wallet_context && (<MenuDropDownButtons walletConnectors={wallet_context.walletConnectors} address={wallet_context.address} />)}
+      <MenuDropDownButtons
+        walletDisconnect={walletDisconnect}
+        walletConnectors={walletConnectors}
+        address={connectedWallet.address}
+      />
     </nav>
   );
 };

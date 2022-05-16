@@ -9,11 +9,13 @@ export interface Wallet {
     network?: string
 }
 
-type WalletConnector = () => Promise<
+export type WalletConnector = () => Promise<
     { data?: import("wagmi-core").ConnectorData<any>, error?: Error }
 >;
 
-type WalletDisconnect = () => Promise<
+export type WalletConnectors = { [key: string]: WalletConnector }
+
+export type WalletDisconnect = () => Promise<
     void
     | { data?: import("wagmi").ConnectorData<any> | undefined, error?: Error; }
 >

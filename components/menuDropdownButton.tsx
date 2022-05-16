@@ -7,17 +7,19 @@ import {
 } from "@heroicons/react/solid";
 import { MetamaskIcon } from "../utils/icons";
 import { addEllipsis, copyToClipboard } from "../utils/utils";
+import { WalletConnectors, WalletDisconnect } from "../context/Web3WalletContext";
 
 const ACTIVE_COLOR = "bg-black text-white";
 
 interface Props {
-  address: string,
-  walletConnectors: Array<Function>
+  address?: string
+  walletConnectors: WalletConnectors
+  walletDisconnect: WalletDisconnect
 }
-const MenuDropdownButtons = ({ address, walletConnectors }: Props) => {
+const MenuDropdownButtons = ({ address, walletConnectors, walletDisconnect }: Props) => {
 
   const handleOnCopyButton = async () => {
-    if (address.length > 0) {
+    if (address) {
       try {
         await copyToClipboard(address);
       } catch (error) { }
@@ -49,8 +51,8 @@ const MenuDropdownButtons = ({ address, walletConnectors }: Props) => {
               } mt-2 w-56 origin-bottom  divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none md:top-[100%] md:origin-top-right`}
           >
             {address
-              ? showUserOptions(handleOnDisconnectButton, handleOnCopyButton)
-              : showConnectOptions(handleOnConnectButton)}
+              ? showUserOptions(walletDisconnect, handleOnCopyButton)
+              : showConnectOptions(walletConnectors)}
           </Menu.Items>
         </Transition>
       </Menu>
@@ -59,35 +61,43 @@ const MenuDropdownButtons = ({ address, walletConnectors }: Props) => {
 }
 
 // CONDITIONAL COMPONENTS
-const buttonText = (_address) => {
-  let ellipsis = addEllipsis(_address);
+const buttonText = (address: string) => {
+  let ellipsis = addEllipsis(address);
   return `🦊 ${ellipsis} `;
 };
 
-const showConnectOptions = (handleOnConnectButton) => {
+const showConnectOptions = (walletConnectors: WalletConnectors) => {
+
   return (
     <div className="px-1 py-1 ">
-      <Menu.Item onClick={handleOnConnectButton}>
-        {({ active }) => (
-          <button
-            className={`${active ? ACTIVE_COLOR : "text-gray-900"
-              } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-          >
-            <MetamaskIcon className={`mr-2 h-5 w-5`} />
-            Metamask
-          </button>
-        )}
-      </Menu.Item>
+      {
+        Object.entries(walletConnectors).map(([wallet_name, wallet_connector]) => {
+          return (
+            <Menu.Item>
+              {({ active }: any) => (
+                <button
+                  onClick={() => { wallet_connector() }}
+                  className={`${active ? ACTIVE_COLOR : "text-gray-900"
+                    } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                >
+                  <MetamaskIcon className={`mr-2 h-5 w-5`} />
+                  {wallet_name}
+                </button>
+              )}
+            </Menu.Item>
+          )
+        })
+      }
     </div>
   );
 };
 
-const showUserOptions = (handleOnDisconnectButton, handleOnCopyButton) => {
+const showUserOptions = (walletDiscconect: WalletDisconnect, handleOnCopyButton: Function) => {
   return (
     <div className="px-1 py-1">
-      <Menu.Item onClick={handleOnCopyButton}>
-        {({ active }) => (
-          <button
+      <Menu.Item>
+        {({ active }: any) => (
+          <button onClick={() => { handleOnCopyButton() }}
             className={`${active ? ACTIVE_COLOR : "text-gray-900"
               } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
           >
@@ -96,9 +106,9 @@ const showUserOptions = (handleOnDisconnectButton, handleOnCopyButton) => {
           </button>
         )}
       </Menu.Item>
-      <Menu.Item onClick={handleOnDisconnectButton}>
-        {({ active }) => (
-          <button
+      <Menu.Item>
+        {({ active }: any) => (
+          <button onClick={() => { walletDiscconect() }}
             className={`${active ? ACTIVE_COLOR : "text-gray-900"
               } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
           >

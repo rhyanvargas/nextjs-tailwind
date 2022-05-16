@@ -14,20 +14,8 @@ const Layout = ({ children }: Props) => {
   // STATE
   const [walletName, setwalletName] = useState<WalletNames>("meta_mask")
   const [alert, setAlert] = useState({ type: "success", message: "test" });
-  const { walletConnectors, walletDisconnect, connectedWallet } = useContext(Web3WalletContext)
+  const { connectedWallet } = useContext(Web3WalletContext)
 
-
-  // HANDLERS
-  const handleConnect = async () => {
-    const wallet_connection = await walletConnectors[walletName]();
-    if (wallet_connection.error) {
-      setAlert(() => ({ type: "error", message: wallet_connection.error?.message || "" }));
-    }
-  };
-
-  const handleDisconnect = async () => {
-    await walletDisconnect()
-  };
 
   return (
     <>
