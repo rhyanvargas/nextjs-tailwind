@@ -5,14 +5,6 @@ interface Props {
   type?: string,
   message?: string
 }
-interface AlertConfig {
-  color?: string,
-  styles?: string,
-  title?: string,
-  message?: string
-}
-
-
 const Alert = ({ type, message }: Props) => {
   const [isShowing, setShowing] = useState(type && message ? true : false);
 
@@ -53,6 +45,12 @@ const Alert = ({ type, message }: Props) => {
   );
 };
 
+interface AlertConfig {
+  color?: string,
+  styles?: string,
+  title?: string,
+  message?: string
+}
 function alert_config(type: string, message: string) {
   let config: AlertConfig = {
     color: 'black',

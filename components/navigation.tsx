@@ -1,14 +1,15 @@
 import Link from "next/link";
 import Image from "next/image";
 import logoImg from "../public/nextwind-logo-text-dark.png";
-import { useState, useEffect, useContext } from "react";
 import MenuDropDownButtons from "./menuDropdownButton";
-import Web3WalletContext from "../context/Web3WalletContext";
+import { useWeb3Wallet } from "../context/Web3WalletContext";
 
-interface Props { }
-const Navigation = (props: Props) => {
+interface Props {
+  handleAlert: Function
+}
+const Navigation = ({ handleAlert }: Props) => {
 
-  const { walletConnectors, walletDisconnect, connectedWallet } = useContext(Web3WalletContext)
+  const wallet_context = useWeb3Wallet()
 
   return (
     <nav
@@ -26,11 +27,15 @@ const Navigation = (props: Props) => {
           );
         })}
       </ul>
-      <MenuDropDownButtons
-        walletDisconnect={walletDisconnect}
-        walletConnectors={walletConnectors}
-        address={connectedWallet.address}
-      />
+      {
+        wallet_context?.wallet_info &&
+        <MenuDropDownButtons
+          walletDisconnect={wallet_context.wallet_info.walletDisconnect}
+          walletConnectors={wallet_context.wallet_info.walletConnectors}
+          address={wallet_context.wallet_info.connectedWallet.address}
+          handleAlert={handleAlert}
+        />
+      }
     </nav>
   );
 };

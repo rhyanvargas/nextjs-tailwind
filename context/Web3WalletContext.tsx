@@ -1,5 +1,5 @@
-import { useAddress, useChainId, useDisconnect, useMetamask, useNetwork, useWalletConnect } from "@thirdweb-dev/react";
-import { createContext } from "react";
+import { ChainId, ThirdwebProvider } from "@thirdweb-dev/react";
+import React, { createContext, useContext, useState } from "react";
 
 export type WalletNames = 'meta_mask' | 'wallet_connect'
 
@@ -20,28 +20,36 @@ export type WalletDisconnect = () => Promise<
     | { data?: import("wagmi").ConnectorData<any> | undefined, error?: Error; }
 >
 
-interface State {
+export interface WalletInfo {
     connectedWallet: Wallet,
     walletDisconnect: WalletDisconnect
     walletConnectors: { [key: string]: WalletConnector }
 };
 
-export const InitialState: State = {
-    connectedWallet: {
-        address: useAddress(),
-        chainId: useChainId(),
-        network: useNetwork()?.[0].data.chain?.name
-
-    },
-    walletDisconnect: useDisconnect(),
-    walletConnectors: {
-        "meta_mask": useMetamask(),
-        "wallet_connect": useWalletConnect()
-    }
+export interface State {
+    wallet_info?: WalletInfo
+    set_wallet_info: Function
 }
 
-const Web3WalletContext = createContext<State>(InitialState);
+const web3WalletContext = createContext<State | null>(null);
 
+const { Provider } = web3WalletContext
 
+interface Props {
+    children?: React.ReactNode
+}
+export const Web3WalletProvider = ({ children }: Props) => {
 
-export default Web3WalletContext;
+    const [wallet_info, set_wallet_info] = useState(undefined)
+    return (
+        <ThirdwebProvider desiredChainId={ChainId.Ropsten}>
+            <Provider value={{ wallet_info, set_wallet_info }}>
+                {children}
+            </Provider>
+        </ThirdwebProvider>
+    )
+}
+
+export const useWeb3Wallet = () => useContext(web3WalletContext)
+
+// export default Provider;

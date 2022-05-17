@@ -19,7 +19,6 @@
     "jsx": "preserve",
     "incremental": true
   },
-  "extends": "./node_modules/gts/tsconfig-google.json",
   "include": [
     "next-env.d.ts",
     "**/*.ts",

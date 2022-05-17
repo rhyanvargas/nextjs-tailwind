@@ -1,17 +1,16 @@
 import '../styles/globals.css'
 import type { AppProps } from 'next/app'
-import { ThirdwebProvider, ChainId, useMetamask, useWalletConnect } from "@thirdweb-dev/react";
-import Web3WalletContext, { InitialState } from '../context/Web3WalletContext';
+import { Web3WalletProvider } from '../context/Web3WalletContext';
+import Layout from '../components/layout';
 
 
 function MyApp({ Component, pageProps }: AppProps) {
-
   return (
-    <ThirdwebProvider desiredChainId={ChainId.Rinkeby}>
-      <Web3WalletContext.Provider value={InitialState}>
+    <Web3WalletProvider>
+      <Layout>
         <Component {...pageProps} />
-      </Web3WalletContext.Provider>
-    </ThirdwebProvider>
+      </Layout>
+    </Web3WalletProvider>
   )
 }
 
