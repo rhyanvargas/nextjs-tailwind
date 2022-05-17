@@ -34,7 +34,7 @@ const Layout = ({ children }: Props) => {
     }
   }
 
-  // wallet_context?.set_wallet_info(initial_wallet_info)
+  wallet_context?.wallet_info == undefined && wallet_context?.set_wallet_info(initial_wallet_info)
 
   return (
     <>
@@ -50,7 +50,7 @@ const Layout = ({ children }: Props) => {
         {/* EXAMPLE CONTENT STRUCTURE - section > div.container  */}
         <section>
           {
-            wallet_context &&
+            wallet_context?.wallet_info &&
             <div className="container mx-auto">
               {wallet_context?.wallet_info?.connectedWallet.address && <p>address: {wallet_context.wallet_info?.connectedWallet.address}</p>}
               {wallet_context?.wallet_info?.connectedWallet.chainId && <p>chainId: {wallet_context.wallet_info?.connectedWallet.chainId}</p>}

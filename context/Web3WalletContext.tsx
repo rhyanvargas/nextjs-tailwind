@@ -42,7 +42,7 @@ export const Web3WalletProvider = ({ children }: Props) => {
 
     const [wallet_info, set_wallet_info] = useState(undefined)
     return (
-        <ThirdwebProvider desiredChainId={ChainId.Ropsten}>
+        <ThirdwebProvider desiredChainId={ChainId.Rinkeby}>
             <Provider value={{ wallet_info, set_wallet_info }}>
                 {children}
             </Provider>
