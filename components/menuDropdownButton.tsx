@@ -5,7 +5,6 @@ import {
   LogoutIcon,
   MenuIcon,
 } from "@heroicons/react/solid";
-import { MetamaskIcon } from "../utils/icons";
 import { addEllipsis, copyToClipboard } from "../utils/utils";
 import { WalletConnectors, WalletDisconnect } from "../services/web3_wallet/types";
 
