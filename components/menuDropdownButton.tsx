@@ -7,7 +7,7 @@ import {
 } from "@heroicons/react/solid";
 import { MetamaskIcon } from "../utils/icons";
 import { addEllipsis, copyToClipboard } from "../utils/utils";
-import { WalletConnectors, WalletDisconnect } from "../context/Web3WalletContext";
+import { WalletConnectors, WalletDisconnect } from "../services/web3_wallet/types";
 
 
 interface Props {
@@ -68,9 +68,9 @@ const buttonText = (address: string) => {
 
 const showConnectOptions = (walletConnectors: WalletConnectors, handleAlert: Function) => {
 
-  const menuItems = Object.entries(walletConnectors).map(([wallet_name, wallet_connector]) => {
+  const menuItems = walletConnectors.map(({ name, connection, icon }) => {
     const handleOnclick = async () => {
-      const res = await wallet_connector()
+      const res = await connection()
 
       if (res.error) handleAlert(res.error.message)
     }
@@ -83,8 +83,8 @@ const showConnectOptions = (walletConnectors: WalletConnectors, handleAlert: Fun
             className={`${active ? ACTIVE_COLOR : "text-gray-900"
               } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
           >
-            <MetamaskIcon className={`mr-2 h-5 w-5`} />
-            {wallet_name}
+            {icon}
+            {name}
           </button>
         )}
       </Menu.Item>

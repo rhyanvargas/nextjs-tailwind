@@ -1,6 +1,6 @@
 import '../styles/globals.css'
 import type { AppProps } from 'next/app'
-import { Web3WalletProvider } from '../context/Web3WalletContext';
+import { Web3WalletProvider } from '../services/web3_wallet/provider';
 import Layout from '../components/layout';
 
 

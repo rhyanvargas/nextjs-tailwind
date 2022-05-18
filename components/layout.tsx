@@ -2,15 +2,7 @@ import Head from "next/head";
 import Navigation from "./navigation";
 import { useState } from "react";
 import Alert from "./alert";
-import { useWeb3Wallet, WalletInfo } from "../context/Web3WalletContext";
-import {
-  useMetamask,
-  useWalletConnect,
-  useAddress,
-  useChainId,
-  useDisconnect,
-  useNetwork
-} from "@thirdweb-dev/react";
+import { useWeb3WalletInfo } from "../services/web3_wallet/Web3WalletInfo";
 
 interface Props {
   children?: React.ReactNode
@@ -18,23 +10,8 @@ interface Props {
 const Layout = ({ children }: Props) => {
   // STATE
   const [alert, setAlert] = useState({ type: "success", message: "test" });
-  const wallet_context = useWeb3Wallet()
+  const { address, chainId, network } = useWeb3WalletInfo();
 
-  const initial_wallet_info: WalletInfo = {
-    connectedWallet: {
-      address: useAddress(),
-      chainId: useChainId(),
-      network: useNetwork()?.[0].data.chain?.name
-
-    },
-    walletDisconnect: useDisconnect(),
-    walletConnectors: {
-      "meta_mask": useMetamask(),
-      "wallet_connect": useWalletConnect()
-    }
-  }
-
-  wallet_context?.wallet_info == undefined && wallet_context?.set_wallet_info(initial_wallet_info)
 
   return (
     <>
@@ -49,15 +26,12 @@ const Layout = ({ children }: Props) => {
         {children}
         {/* EXAMPLE CONTENT STRUCTURE - section > div.container  */}
         <section>
-          {
-            wallet_context?.wallet_info &&
-            <div className="container mx-auto">
-              {wallet_context?.wallet_info?.connectedWallet.address && <p>address: {wallet_context.wallet_info?.connectedWallet.address}</p>}
-              {wallet_context?.wallet_info?.connectedWallet.chainId && <p>chainId: {wallet_context.wallet_info?.connectedWallet.chainId}</p>}
-              {wallet_context?.wallet_info?.connectedWallet.network && <p>network: {wallet_context.wallet_info?.connectedWallet.network}</p>}
-              {/* {message && <p>STATUS MESSAGE: {message}</p>} */}
-            </div>
-          }
+          <div className="container mx-auto">
+            {address && <p>address: {address}</p>}
+            {chainId && <p>chainId: {chainId}</p>}
+            {network && <p>network: {network}</p>}
+            {/* {message && <p>STATUS MESSAGE: {message}</p>} */}
+          </div>
         </section>
         {alert && <Alert type={alert.type} message={alert.message} />}
       </main>
